@@ -22,7 +22,7 @@ module.exports = {
     extensions: ['.js', '.jsx']
   },
   devServer: {
-    contentBase: 'front/build',
+    contentBase: 'build',
     inline: true,
     headers: {
       'Access-Control-Allow-Origin': '*',

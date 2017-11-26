@@ -1,140 +1,48 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
+import SignalingManager from './SignalingManager'
 
 class App extends Component {
   constructor(props) {
     super(props)
-    const ws = new WebSocket('ws://localhost:3000')
-    ws.onmessage = async e => {
-      const data = JSON.parse(e.data)
-      if (data.event === 'offer') {
-        await this.handleOffer(data)
-      }
-
-      this.setState({
-        messages: this.state.messages.concat(e.data),
-        message: ''
-      })
-    }
+    this.manager = new SignalingManager()
 
     this.state = {
-      ws,
       message: '',
-      messages: []
+      messages: [],
+      signaling: false
     }
 
     this.sendMessage = this.sendMessage.bind(this)
     this.handleMsgChange = this.handleMsgChange.bind(this)
+    this.handleOffer = this.handleOffer.bind(this)
+    this.sendOffer = this.sendOffer.bind(this)
   }
 
-  createPeerConnection() {
-    return new RTCPeerConnection({
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
-      iceTransportPorlicy: 'all'
-    })
-  }
-
-  async handleOffer({ sdp }) {
-    const pc = this.createPeerConnection()
-    pc.ondatachannel = event => {
-      const dc = event.channel
-      dc.onopen = () => {
-        window.console.log('open')
-        dc.send('hello')
-      }
-      dc.onmessage = e => {
-        window.console.log(e.data)
-      }
-
-      dc.onerror = e => {
-        window.console.log(e)
-      }
-      dc.onclose = () => {
-        window.console.log('closed')
-      }
-    }
-
-    await pc.setRemoteDescription(new RTCSessionDescription(sdp))
-    const answerSdp = await pc.createAnswer()
-    await pc.setLocalDescription(answerSdp)
-    const ws = new WebSocket('ws://localhost:3000')
-    ws.onopen = () => {
-      ws.onmessage = async e => {
-        const data = JSON.parse(e.data)
-        if (data.event === 'icecandidate' && data.to === 'id2') {
-          window.console.log('icecandidate 2')
-          await pc.addIceCandidate(new RTCIceCandidate(data.data))
-        }
-      }
-      ws.send(
-        JSON.stringify({
-          to: 'id',
-          event: 'answer',
-          sdp: answerSdp
+  handleOffer() {
+    this.setState({ signaling: true })
+    this.manager.handleOffer({
+      onopen: dataChannel => {
+        this.channel = dataChannel
+      },
+      onmessage: e => {
+        this.setState({
+          messages: this.state.messages.concat(e.data)
         })
-      )
-      pc.onicecandidate = e => {
-        if (e.candidate) {
-          ws.send(
-            JSON.stringify({
-              to: 'id1',
-              event: 'icecandidate',
-              data: e.candidate
-            })
-          )
-        }
       }
-    }
+    })
   }
 
   async sendOffer() {
-    const pc = this.createPeerConnection()
-    const dc = pc.createDataChannel('label', {
-      orderd: true,
-      maxPacketLifeTime: 1000,
-      maxRetransmits: 3
-    })
-    const offerSdp = await pc.createOffer()
-    await pc.setLocalDescription(offerSdp)
-    const ws = new WebSocket('ws://localhost:3000')
-    ws.onopen = () => {
-      ws.send(JSON.stringify({ to: 'id', event: 'offer', sdp: offerSdp }))
-      pc.onicecandidate = e => {
-        if (e.candidate) {
-          ws.send(
-            JSON.stringify({
-              to: 'id2',
-              event: 'icecandidate',
-              data: e.candidate
-            })
-          )
-        }
-      }
-    }
-    ws.onmessage = async e => {
-      const data = JSON.parse(e.data)
-      if (data.event === 'answer') {
-        await pc.setRemoteDescription(new RTCSessionDescription(data.sdp))
-      }
-      if (data.event === 'icecandidate' && data.to === 'id1') {
-        window.console.log('icecandidate')
-        await pc.addIceCandidate(new RTCIceCandidate(data.data))
-      }
-    }
-    dc.onopen = () => {
-      window.console.log('open')
-      dc.send('hello')
-    }
-    dc.onmessage = e => {
-      window.console.log(e.data)
+    this.setState({ signaling: true })
+    const dataChannel = await this.manager.sendOffer()
+    dataChannel.onmessage = e => {
+      this.setState({
+        messages: this.state.messages.concat(e.data)
+      })
     }
 
-    dc.onerror = e => {
-      window.console.log(e)
-    }
-    dc.onclose = () => {
-      window.console.log('closed')
-    }
+    this.channel = dataChannel
   }
 
   handleMsgChange(e) {
@@ -145,9 +53,15 @@ class App extends Component {
 
   sendMessage(e) {
     e.preventDefault()
-    this.sendOffer()
-    //this.state.ws.send(this.state.message)
+    this.setState({
+      messages: this.state.messages.concat(this.state.message)
+    })
+    this.channel.send(this.state.message)
     e.target.reset()
+  }
+
+  get visible() {
+    return !this.state.signaling
   }
 
   render() {
@@ -158,6 +72,18 @@ class App extends Component {
           <input type="text" id="msg" onChange={this.handleMsgChange} />
           <input type="submit" value="送信" />
         </form>
+        <input
+          type="button"
+          value="ホストになる"
+          onClick={this.handleOffer}
+          style={{ display: this.visible ? '' : 'none' }}
+        />
+        <input
+          type="button"
+          value="オファーを送る"
+          onClick={this.sendOffer}
+          style={{ display: this.visible ? '' : 'none' }}
+        />
       </div>
     )
   }
