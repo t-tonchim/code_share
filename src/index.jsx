@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { render } from 'react-dom'
 import SignalingManager from './SignalingManager'
+import 'brace'
+import Ace from 'react-ace'
+import 'brace/mode/ruby'
+import 'brace/theme/monokai'
 
 class App extends Component {
   constructor(props) {
@@ -10,13 +14,19 @@ class App extends Component {
     this.state = {
       message: '',
       messages: [],
-      signaling: false
+      signaling: false,
+      editorText: ''
     }
 
     this.sendMessage = this.sendMessage.bind(this)
-    this.handleMsgChange = this.handleMsgChange.bind(this)
     this.handleOffer = this.handleOffer.bind(this)
     this.sendOffer = this.sendOffer.bind(this)
+  }
+
+  handleEditorOnChange(text) {
+    if (this.channel) {
+      this.channel.send(JSON.stringify({ type: 'edit', text }))
+    }
   }
 
   handleOffer() {
@@ -26,9 +36,17 @@ class App extends Component {
         this.channel = dataChannel
       },
       onmessage: e => {
-        this.setState({
-          messages: this.state.messages.concat(e.data)
-        })
+        const data = JSON.parse(e.data)
+        if (data.type === 'edit') {
+          this.setState({
+            editorText: data.text
+          })
+        }
+        if (data.type === 'chat') {
+          this.setState({
+            messages: this.state.messages.concat(data.message)
+          })
+        }
       }
     })
   }
@@ -37,26 +55,30 @@ class App extends Component {
     this.setState({ signaling: true })
     const dataChannel = await this.manager.sendOffer()
     dataChannel.onmessage = e => {
-      this.setState({
-        messages: this.state.messages.concat(e.data)
-      })
+      const data = JSON.parse(e.data)
+      if (data.type === 'edit') {
+        this.setState({
+          editorText: data.text
+        })
+      }
+      if (data.type === 'chat') {
+        this.setState({
+          messages: this.state.messages.concat(data.message)
+        })
+      }
     }
 
     this.channel = dataChannel
   }
 
-  handleMsgChange(e) {
-    this.setState({
-      message: e.target.value
-    })
-  }
-
   sendMessage(e) {
     e.preventDefault()
     this.setState({
-      messages: this.state.messages.concat(this.state.message)
+      messages: this.state.messages.concat(e.target.text.value)
     })
-    this.channel.send(this.state.message)
+    this.channel.send(
+      JSON.stringify({ type: 'chat', message: e.target.text.value })
+    )
     e.target.reset()
   }
 
@@ -68,8 +90,15 @@ class App extends Component {
     return (
       <div>
         {this.state.messages.map((message, i) => <p key={i}>{message}</p>)}
+        <Ace
+          mode="ruby"
+          theme="monokai"
+          onChange={newValue => this.handleEditorOnChange(newValue)}
+          editorProps={{ $blockScrolling: true }}
+          value={this.state.editorText}
+        />
         <form onSubmit={this.sendMessage}>
-          <input type="text" id="msg" onChange={this.handleMsgChange} />
+          <input type="text" name="text" id="msg" />
           <input type="submit" value="送信" />
         </form>
         <input
