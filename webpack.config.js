@@ -18,7 +18,7 @@ module.exports = {
     ]
   },
   resolve: {
-    modules: ['node_modules', path.resolve('/src')],
+    modules: ['node_modules', path.resolve('src/')],
     extensions: ['.js', '.jsx']
   },
   devServer: {
