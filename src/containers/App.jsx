@@ -9,94 +9,58 @@ class App extends Component {
   static get propTypes() {
     return {
       signaling: PropTypes.bool.isRequired,
-      answer: PropTypes.func.isRequired,
-      offer: PropTypes.func.isRequired,
-      chat: PropTypes.func.isRequired,
+      host: PropTypes.bool.isRequired,
+      initHost: PropTypes.func.isRequired,
       edit: PropTypes.func.isRequired,
       editorText: PropTypes.string,
-      messages: PropTypes.arrayOf(PropTypes.string),
-      manager: PropTypes.shape({
-        handleOffer: PropTypes.func.isRequired,
-        sendOffer: PropTypes.func.isRequired
-      })
+      clientId: PropTypes.string,
+      dataChannel: PropTypes.shape({
+        send: PropTypes.func
+      }),
+      sendOffer: PropTypes.func
     }
-  }
-
-  constructor(props) {
-    super(props)
-
-    this.sendMessage = this.sendMessage.bind(this)
-    this.handleOffer = this.handleOffer.bind(this)
-    this.sendOffer = this.sendOffer.bind(this)
-    this.handleEditorOnChange = this.handleEditorOnChange.bind(this)
   }
 
   handleEditorOnChange(text) {
     this.props.edit({ text })
-    if (this.channel) {
-      this.channel.send(JSON.stringify({ type: 'edit', text }))
+    if (this.props.dataChannel) {
+      this.props.dataChannel.send(JSON.stringify({ type: 'edit', text }))
     }
   }
 
-  handleOffer() {
-    this.props.answer({ signaling: true })
-    this.props.manager.handleOffer({
-      onopen: dataChannel => {
-        this.channel = dataChannel
-      },
-      onmessage: e => {
-        const data = JSON.parse(e.data)
-        this.props[data.type](data)
-      }
-    })
+  get clientID() {
+    if (!this.props.host) return
+    return <p>あなたのIDは {this.props.clientId} です</p>
   }
 
-  async sendOffer() {
-    this.props.offer({ signaling: true })
-    const dataChannel = await this.props.manager.sendOffer()
-    dataChannel.onmessage = e => {
-      const data = JSON.parse(e.data)
-      this.props[data.type](data)
+  get buttonDisplay() {
+    return {
+      display: this.props.signaling ? 'none' : ''
     }
-
-    this.channel = dataChannel
   }
 
-  sendMessage(e) {
+  sendOffer(e) {
     e.preventDefault()
-    this.props.chat({ message: e.target.text.value })
-    this.channel.send(
-      JSON.stringify({ type: 'chat', message: e.target.text.value })
-    )
-    e.target.reset()
+    this.props.sendOffer({ to: e.target.to.value })
   }
 
   render() {
     return (
       <div>
-        {this.props.messages.map((message, i) => <p key={i}>{message}</p>)}
         <Editor
-          onChange={this.handleEditorOnChange}
+          onChange={::this.handleEditorOnChange}
           value={this.props.editorText}
         />
-        <form
-          onSubmit={this.sendMessage}
-          style={{ display: this.props.signaling ? '' : 'none' }}
-        >
-          <input type="text" name="text" id="msg" />
-          <input type="submit" value="送信" />
+        <form onSubmit={::this.sendOffer} style={this.buttonDisplay}>
+          <input type="text" name="to" id="msg" />
+          <input type="submit" value="オファーを送る" />
         </form>
+        {this.clientID}
         <input
           type="button"
           value="ホストになる"
-          onClick={this.handleOffer}
-          style={{ display: this.props.signaling ? 'none' : '' }}
-        />
-        <input
-          type="button"
-          value="オファーを送る"
-          onClick={this.sendOffer}
-          style={{ display: this.props.signaling ? 'none' : '' }}
+          onClick={this.props.initHost}
+          style={this.buttonDisplay}
         />
       </div>
     )

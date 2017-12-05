@@ -1,32 +1,44 @@
 import { handleActions } from 'redux-actions'
-import actions from '../actions'
-import SignalingManager from '../SignalingManager'
+import actions from 'actions'
+import uuid from 'uuid-v4'
 
 export const initialState = {
-  messages: [],
   signaling: false,
   editorText: '',
-  manager: new SignalingManager()
+  peer: createPeerConnection(),
+  clientId: uuid(),
+  host: false
 }
 
 export default handleActions(
   {
-    [actions.offer]: state => ({
+    [actions.initHost]: state => ({
       ...state,
-      signaling: true
-    }),
-    [actions.answer]: state => ({
-      ...state,
-      signaling: true
+      host: true
     }),
     [actions.edit]: (state, action) => ({
       ...state,
       editorText: action.payload.text
     }),
-    [actions.chat]: (state, action) => ({
+    [actions.setDataChannel]: (state, action) => ({
       ...state,
-      messages: state.messages.concat(action.payload.message)
+      dataChannel: action.payload.dataChannel
+    }),
+    [actions.setHostId]: (state, action) => ({
+      ...state,
+      hostId: action.payload.to,
+      host: action.payload.host,
+      signaling: true
     })
   },
   initialState
 )
+
+const iceServers = [{ urls: 'stun:stun.l.google.com:19302' }]
+
+function createPeerConnection() {
+  return new RTCPeerConnection({
+    iceServers,
+    iceTransportPorlicy: 'all'
+  })
+}
