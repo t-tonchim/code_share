@@ -21,7 +21,9 @@ class App extends Component {
       sendOffer: PropTypes.func,
       channelOpen: PropTypes.bool.isRequired,
       changeMode: PropTypes.func.isRequired,
-      mode: PropTypes.string.isRequired
+      mode: PropTypes.string.isRequired,
+      changeKeybind: PropTypes.func.isRequired,
+      keybind: PropTypes.string
     }
   }
 
@@ -56,14 +58,20 @@ class App extends Component {
     this.props.changeMode({ mode: e.target.value })
   }
 
+  onChangeKeybind(e) {
+    this.props.changeKeybind({ keybind: e.target.value })
+  }
+
   render() {
     return (
       <div>
         <Editor
           onChange={::this.handleEditorOnChange}
           onChangeMode={::this.onChangeMode}
+          onChangeKeybind={::this.onChangeKeybind}
           value={this.props.editorText}
           mode={this.props.mode}
+          keybind={this.props.keybind}
         />
         <form onSubmit={::this.sendOffer} style={this.buttonDisplay}>
           <input type="text" name="to" id="msg" />

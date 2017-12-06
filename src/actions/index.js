@@ -13,5 +13,6 @@ export default createActions(
   'SET_DATA_CHANNEL',
   'CHANNEL_OPENED',
   'NOTHING',
-  'CHANGE_MODE'
+  'CHANGE_MODE',
+  'CHANGE_KEYBIND'
 )
