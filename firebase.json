@@ -1,0 +1,8 @@
+{
+  "hosting":{
+    "public":"build",
+    "ignore":[
+      "index.js.map"
+    ]
+  }
+}
