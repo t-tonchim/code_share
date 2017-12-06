@@ -111,6 +111,7 @@ function* handleAnswer(action) {
 function* watchMessage() {
   yield take(actions.setDataChannel)
   const { dataChannel } = yield select()
+  yield put(actions.channelOpened())
   yield fork(commonWatcher, subscribeMessage, dataChannel)
 }
 

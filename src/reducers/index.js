@@ -7,7 +7,8 @@ export const initialState = {
   editorText: '',
   peer: createPeerConnection(),
   clientId: uuid(),
-  host: false
+  host: false,
+  channelOpen: false
 }
 
 export default handleActions(
@@ -29,6 +30,10 @@ export default handleActions(
       hostId: action.payload.to,
       host: action.payload.host,
       signaling: true
+    }),
+    [actions.channelOpened]: state => ({
+      ...state,
+      channelOpen: true
     })
   },
   initialState

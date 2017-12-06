@@ -11,5 +11,6 @@ export default createActions(
   'SET_HOST_CANDIDATE',
   'SET_GUEST_CANDIDATE',
   'SET_DATA_CHANNEL',
+  'CHANNEL_OPENED',
   'NOTHING'
 )

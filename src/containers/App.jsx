@@ -18,7 +18,8 @@ class App extends Component {
       dataChannel: PropTypes.shape({
         send: PropTypes.func
       }),
-      sendOffer: PropTypes.func
+      sendOffer: PropTypes.func,
+      channelOpen: PropTypes.bool.isRequired
     }
   }
 
@@ -38,6 +39,10 @@ class App extends Component {
     return {
       display: this.props.signaling ? 'none' : ''
     }
+  }
+
+  get channelOpened() {
+    return this.props.channelOpen ? <p>接続完了しました</p> : ''
   }
 
   sendOffer(e) {
@@ -63,6 +68,7 @@ class App extends Component {
           onClick={this.props.initHost}
           style={this.buttonDisplay}
         />
+        {this.channelOpened}
       </div>
     )
   }
