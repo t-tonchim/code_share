@@ -12,5 +12,6 @@ export default createActions(
   'SET_GUEST_CANDIDATE',
   'SET_DATA_CHANNEL',
   'CHANNEL_OPENED',
-  'NOTHING'
+  'NOTHING',
+  'CHANGE_MODE'
 )

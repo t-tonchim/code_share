@@ -8,7 +8,8 @@ export const initialState = {
   peer: createPeerConnection(),
   clientId: uuid(),
   host: false,
-  channelOpen: false
+  channelOpen: false,
+  mode: 'ruby'
 }
 
 export default handleActions(
@@ -34,6 +35,10 @@ export default handleActions(
     [actions.channelOpened]: state => ({
       ...state,
       channelOpen: true
+    }),
+    [actions.changeMode]: (state, action) => ({
+      ...state,
+      mode: action.payload.mode
     })
   },
   initialState

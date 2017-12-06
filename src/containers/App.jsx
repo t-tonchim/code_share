@@ -19,7 +19,9 @@ class App extends Component {
         send: PropTypes.func
       }),
       sendOffer: PropTypes.func,
-      channelOpen: PropTypes.bool.isRequired
+      channelOpen: PropTypes.bool.isRequired,
+      changeMode: PropTypes.func.isRequired,
+      mode: PropTypes.string.isRequired
     }
   }
 
@@ -50,12 +52,18 @@ class App extends Component {
     this.props.sendOffer({ to: e.target.to.value })
   }
 
+  onChangeMode(e) {
+    this.props.changeMode({ mode: e.target.value })
+  }
+
   render() {
     return (
       <div>
         <Editor
           onChange={::this.handleEditorOnChange}
+          onChangeMode={::this.onChangeMode}
           value={this.props.editorText}
+          mode={this.props.mode}
         />
         <form onSubmit={::this.sendOffer} style={this.buttonDisplay}>
           <input type="text" name="to" id="msg" />
