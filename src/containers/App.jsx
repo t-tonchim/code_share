@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import Editor from '../components/Editor'
+import Editor from 'components/Editor'
+import Hostid from 'components/Hostid'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions from '../actions'
+import actions from 'actions'
 import PropTypes from 'prop-types'
 
 class App extends Component {
@@ -28,9 +29,9 @@ class App extends Component {
     }
   }
 
-  get clientID() {
+  get hostID() {
     if (!this.props.host) return
-    return <p>あなたのIDは {this.props.clientId} です</p>
+    return <Hostid uuid={this.props.clientId} />
   }
 
   get buttonDisplay() {
@@ -55,7 +56,7 @@ class App extends Component {
           <input type="text" name="to" id="msg" />
           <input type="submit" value="オファーを送る" />
         </form>
-        {this.clientID}
+        {this.hostID}
         <input
           type="button"
           value="ホストになる"
