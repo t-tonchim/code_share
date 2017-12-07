@@ -27,8 +27,12 @@ class App extends Component {
 
   handleEditorOnChange(text) {
     this.props.edit({ text })
+    this.sendData({ type: 'edit', text })
+  }
+
+  sendData(value) {
     if (this.props.dataChannel) {
-      this.props.dataChannel.send(JSON.stringify({ type: 'edit', text }))
+      this.props.dataChannel.send(JSON.stringify(value))
     }
   }
 
@@ -53,7 +57,9 @@ class App extends Component {
   }
 
   onChangeMode(e) {
-    this.props.changeMode({ mode: e.target.value })
+    const mode = e.target.value
+    this.props.changeMode({ mode })
+    this.sendData({ type: 'changeMode', mode })
   }
 
   render() {

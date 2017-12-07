@@ -26,24 +26,24 @@ import 'brace/ext/language_tools'
 import PropTypes from 'prop-types'
 
 const modes = {
-  Ruby: 'ruby',
-  JavaScript: 'javascript',
-  JSX: 'jsx',
-  PHP: 'php',
-  Java: 'java',
-  SQL: 'sql',
-  Python: 'python',
-  CSS: 'css',
-  Markdown: 'markdown',
-  TypeScript: 'typescript',
-  TSX: 'tsx',
-  HTML: 'html',
-  ShellScript: 'sh',
-  'C#': 'csharp',
-  Haskell: 'haskell',
-  Go: 'golang',
-  Elixir: 'elixir',
-  Swift: 'swift'
+  ruby: 'Ruby',
+  javascript: 'JavaScript',
+  jsx: 'JSX',
+  php: 'PHP',
+  java: 'Java',
+  sql: 'Sql',
+  python: 'Python',
+  css: 'CSS',
+  markdown: 'Markdown',
+  typescript: 'TypeScript',
+  tsx: 'TSX',
+  html: 'HTML',
+  sh: 'ShellScript',
+  csharp: 'C#',
+  haskell: 'Haskell',
+  golang: 'Go',
+  elixir: 'Elixir',
+  swift: 'Swift'
 }
 
 const keybinds = [null, 'vim', 'emacs']
@@ -89,10 +89,14 @@ export default class Editor extends Component {
     return (
       <div>
         <label htmlFor="syntax">syntax </label>
-        <select id="syntax" onChange={this.props.onChangeMode}>
+        <select
+          id="syntax"
+          onChange={this.props.onChangeMode}
+          value={this.props.mode}
+        >
           {Object.entries(modes).map(([k, v], i) => (
-            <option key={i} value={v}>
-              {k}
+            <option key={i} value={k}>
+              {v}
             </option>
           ))}
         </select>
