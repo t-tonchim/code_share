@@ -39,10 +39,6 @@ export default handleActions(
     [actions.changeMode]: (state, action) => ({
       ...state,
       mode: action.payload.mode
-    }),
-    [actions.changeKeybind]: (state, action) => ({
-      ...state,
-      keybind: action.payload.keybind
     })
   },
   initialState
