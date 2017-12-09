@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import Editor from 'components/Editor'
-import Hostid from 'components/Hostid'
+import Editor from '../components/Editor'
+import Hostid from '../components/Hostid'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import actions from 'actions'
+import actions from '../actions'
 import PropTypes from 'prop-types'
 
 class App extends Component {

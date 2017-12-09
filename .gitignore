@@ -1,3 +1,5 @@
 build/index.js*
 node_modules/**/*
 src/config.js
+dist/*
+.cache/*

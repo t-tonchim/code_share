@@ -1,13 +1,12 @@
 {
-  "name": "article",
+  "name": "code_share",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server"
+    "start": "parcel index.html",
+    "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-2": "^6.24.1",
     "brace": "^0.11.0",
     "clipboard": "^1.7.1",
     "firebase": "^4.7.0",
@@ -16,7 +15,6 @@
     "react-ace": "^5.7.0",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
-    "react-router": "^4.2.0",
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-saga": "^0.16.0",
@@ -26,16 +24,13 @@
   "devDependencies": {
     "babel": "^6.23.0",
     "babel-eslint": "^8.0.2",
-    "babel-loader": "^7.1.2",
     "babel-plugin-transform-function-bind": "^6.22.0",
-    "babel-plugin-transform-pipeline-operator": "^7.0.0-beta.3",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-3": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1",
     "eslint": "^4.11.0",
     "eslint-plugin-react": "^7.4.0",
-    "prettier": "^1.8.2",
-    "prettier-eslint": "^8.2.2",
-    "webpack": "^3.8.1",
-    "webpack-dev-server": "^2.9.4"
+    "parcel-bundler": "^1.1.0",
+    "prettier": "^1.8.2"
   }
 }

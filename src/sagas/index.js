@@ -1,8 +1,16 @@
-import { takeEvery, eventChannel } from 'redux-saga'
-import { take, fork, select, call, put, all } from 'redux-saga/effects'
-import actions from 'actions'
+import { eventChannel } from 'redux-saga'
+import {
+  takeEvery,
+  take,
+  fork,
+  select,
+  call,
+  put
+} from 'redux-saga/effects'
+import 'babel-polyfill'
+import actions from '../actions'
 import firebase from 'firebase'
-import config from 'config'
+import config from '../config'
 
 const app = firebase.initializeApp(config)
 const db = app.database()
@@ -19,9 +27,7 @@ function subscribeSignaling({ clientId, hostId }) {
   return eventChannel(emit => {
     ref.on('child_added', data => {
       const { from, type } = data.val()
-      if (from === clientId || !type) {
-        emit({ type: 'NOTHING' })
-      } else {
+      if (from !== clientId && type) {
         emit(actions[type]({ ...data.val() }))
       }
     })
@@ -118,11 +124,9 @@ function* watchMessage() {
 function* watchEvents() {
   yield take(actions.setHostId)
   const { clientId, hostId, peer } = yield select()
-  yield all([
-    yield fork(commonWatcher, subscribeSignaling, { clientId, hostId }),
-    yield fork(commonWatcher, subscribeCandidate, peer),
-    yield fork(commonWatcher, subscribeDataChannel, peer)
-  ])
+  yield fork(commonWatcher, subscribeSignaling, { clientId, hostId })
+  yield fork(commonWatcher, subscribeCandidate, peer)
+  yield fork(commonWatcher, subscribeDataChannel, peer)
 }
 
 function* commonWatcher(subscribe, ...args) {
@@ -164,8 +168,6 @@ function* setGuestCandidate(action) {
 function* initHost() {
   const { clientId } = yield select()
   yield put(actions.setHostId({ to: clientId, host: true }))
-  const ref = db.ref(`sessions/${clientId}`)
-  yield call(() => ref.push({ from: clientId, type: 'nothing' }))
 }
 
 export default function* rootSaga() {
