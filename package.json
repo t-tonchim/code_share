@@ -2,7 +2,7 @@
   "name": "code_share",
   "private": true,
   "scripts": {
-    "start": "parcel index.html",
+    "start": "parcel src/index.html",
     "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/ && uglifyjs -c -m -o build/index.js build/index.js"
   },
   "dependencies": {
