@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "start": "parcel index.html",
-    "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/"
+    "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/ && uglifyjs -c -m -o build/index.js build/index.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
@@ -31,6 +31,7 @@
     "eslint": "^4.11.0",
     "eslint-plugin-react": "^7.4.0",
     "parcel-bundler": "^1.1.0",
-    "prettier": "^1.8.2"
+    "prettier": "^1.8.2",
+    "uglify-es": "^3.2.1"
   }
 }
