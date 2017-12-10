@@ -69,7 +69,7 @@ export default class Editor extends Component {
 
   onChangeFontsize(e) {
     this.setState({
-      fontSize: e.target.value
+      fontSize: parseInt(e.target.value, 0)
     })
   }
 

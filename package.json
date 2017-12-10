@@ -2,7 +2,7 @@
   "name": "code_share",
   "private": true,
   "scripts": {
-    "start": "parcel src/index.html",
+    "start": "NODE_ENV=development parcel src/index.html",
     "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/ && uglifyjs -c -m -o build/index.js build/index.js"
   },
   "dependencies": {
@@ -32,6 +32,7 @@
     "eslint-plugin-react": "^7.4.0",
     "parcel-bundler": "^1.1.0",
     "prettier": "^1.8.2",
+    "redux-devtools-extension": "^2.13.2",
     "uglify-es": "^3.2.1"
   }
 }
