@@ -1,12 +1,5 @@
 import { eventChannel } from 'redux-saga'
-import {
-  takeEvery,
-  take,
-  fork,
-  select,
-  call,
-  put
-} from 'redux-saga/effects'
+import { takeEvery, take, fork, select, call, put } from 'redux-saga/effects'
 import 'babel-polyfill'
 import actions from '../actions'
 import firebase from 'firebase'
@@ -16,9 +9,7 @@ const app = firebase.initializeApp(config)
 const db = app.database()
 
 const dataChannelOption = {
-  order: true,
-  maxPacketLifeTime: 1000,
-  maxRetransmits: 3
+  order: true
 }
 
 function subscribeSignaling({ clientId, hostId }) {
@@ -141,7 +132,7 @@ function* setHostCandidate(action) {
   const { candidate } = action.payload
   const ref = db.ref(`sessions/${clientId}`)
   const candidateObj = new RTCIceCandidate(candidate)
-  if (peer.remoteDescription.type) {
+  if (peer.remoteDescription && peer.remoteDescription.type) {
     try {
       yield call(() => peer.addIceCandidate(candidateObj))
       yield call(() =>

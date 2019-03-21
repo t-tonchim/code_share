@@ -18,11 +18,11 @@
     "redux": "^3.7.2",
     "redux-actions": "^2.2.1",
     "redux-saga": "^0.16.0",
-    "uuid-v4": "^0.1.0",
-    "webrtc-adapter": "^6.0.2"
+    "uuid-v4": "^0.1.0"
   },
   "devDependencies": {
     "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
     "babel-eslint": "^8.0.2",
     "babel-plugin-transform-function-bind": "^6.22.0",
     "babel-preset-env": "^1.6.1",
