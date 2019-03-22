@@ -3,14 +3,12 @@
   "private": true,
   "scripts": {
     "start": "NODE_ENV=development parcel src/index.html",
-    "build": "NODE_ENV=production parcel build src/index.js --no-minify -d build/ && uglifyjs -c -m -o build/index.js build/index.js"
+    "build": "NODE_ENV=production parcel build src/index.js --no-minify --no-source-maps --experimental-scope-hoisting -d build/ && uglifyjs -c -m -o build/index.js build/index.js"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "brace": "^0.11.0",
-    "clipboard": "^1.7.1",
     "firebase": "^4.7.0",
-    "prop-types": "^15.6.0",
     "react": "^16.1.1",
     "react-ace": "^5.7.0",
     "react-dom": "^16.1.1",
@@ -30,9 +28,9 @@
     "babel-preset-stage-2": "^6.24.1",
     "eslint": "^4.11.0",
     "eslint-plugin-react": "^7.4.0",
-    "parcel-bundler": "^1.1.0",
+    "parcel-bundler": "^1.12.3",
     "prettier": "^1.8.2",
     "redux-devtools-extension": "^2.13.2",
-    "uglify-es": "^3.2.1"
+    "uglify-js": "^3.5.1"
   }
 }

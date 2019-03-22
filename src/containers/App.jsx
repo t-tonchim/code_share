@@ -3,25 +3,8 @@ import Editor from '../components/Editor'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from '../actions'
-import PropTypes from 'prop-types'
 
 class App extends Component {
-  static get propTypes() {
-    return {
-      host: PropTypes.bool.isRequired,
-      initHost: PropTypes.func.isRequired,
-      edit: PropTypes.func.isRequired,
-      editorText: PropTypes.string,
-      clientId: PropTypes.string,
-      dataChannel: PropTypes.shape({
-        send: PropTypes.func
-      }),
-      sendOffer: PropTypes.func,
-      changeMode: PropTypes.func.isRequired,
-      mode: PropTypes.string.isRequired
-    }
-  }
-
   componentDidMount() {
     const params = new URLSearchParams(location.search)
     const uuid = params.get('uuid')
