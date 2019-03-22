@@ -62,7 +62,7 @@ function* handleSendOffer(action) {
   const { peer, clientId } = yield select()
   try {
     const dataChannel = yield call(() =>
-      peer.createDataChannel('label', dataChannelOption)
+      peer.createDataChannel('editor', dataChannelOption)
     )
     yield put(actions.setDataChannel({ dataChannel }))
     const sdp = yield call(() => peer.createOffer())
@@ -108,7 +108,6 @@ function* handleAnswer(action) {
 function* watchMessage() {
   yield take(actions.setDataChannel)
   const { dataChannel } = yield select()
-  yield put(actions.channelOpened())
   yield fork(commonWatcher, subscribeMessage, dataChannel)
 }
 

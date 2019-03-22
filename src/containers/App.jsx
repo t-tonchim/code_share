@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import Editor from '../components/Editor'
-import Hostid from '../components/Hostid'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from '../actions'
@@ -9,7 +8,6 @@ import PropTypes from 'prop-types'
 class App extends Component {
   static get propTypes() {
     return {
-      signaling: PropTypes.bool.isRequired,
       host: PropTypes.bool.isRequired,
       initHost: PropTypes.func.isRequired,
       edit: PropTypes.func.isRequired,
@@ -19,9 +17,19 @@ class App extends Component {
         send: PropTypes.func
       }),
       sendOffer: PropTypes.func,
-      channelOpen: PropTypes.bool.isRequired,
       changeMode: PropTypes.func.isRequired,
       mode: PropTypes.string.isRequired
+    }
+  }
+
+  componentDidMount() {
+    const params = new URLSearchParams(location.search)
+    const uuid = params.get('uuid')
+    if (uuid) {
+      this.props.sendOffer({ to: uuid })
+    } else {
+      this.props.initHost()
+      history.replaceState('', '', `?uuid=${this.props.clientId}`)
     }
   }
 
@@ -34,26 +42,6 @@ class App extends Component {
     if (this.props.dataChannel) {
       this.props.dataChannel.send(JSON.stringify(value))
     }
-  }
-
-  get hostID() {
-    if (!this.props.host) return
-    return <Hostid uuid={this.props.clientId} />
-  }
-
-  get buttonDisplay() {
-    return {
-      display: this.props.signaling ? 'none' : ''
-    }
-  }
-
-  get channelOpened() {
-    return this.props.channelOpen ? <p>connection established👍</p> : ''
-  }
-
-  sendOffer(e) {
-    e.preventDefault()
-    this.props.sendOffer({ to: e.target.to.value })
   }
 
   onChangeMode(e) {
@@ -71,18 +59,6 @@ class App extends Component {
           value={this.props.editorText}
           mode={this.props.mode}
         />
-        <form onSubmit={::this.sendOffer} style={this.buttonDisplay}>
-          <input type="text" name="to" id="msg" />
-          <input type="submit" value="send offer to host" />
-        </form>
-        {this.hostID}
-        <input
-          type="button"
-          value="to be host"
-          onClick={this.props.initHost}
-          style={this.buttonDisplay}
-        />
-        {this.channelOpened}
       </div>
     )
   }

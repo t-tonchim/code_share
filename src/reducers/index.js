@@ -3,12 +3,10 @@ import actions from '../actions'
 import uuid from 'uuid-v4'
 
 export const initialState = {
-  signaling: false,
   editorText: '',
   peer: createPeerConnection(),
   clientId: uuid(),
   host: false,
-  channelOpen: false,
   mode: 'ruby'
 }
 
@@ -29,12 +27,7 @@ export default handleActions(
     [actions.setHostId]: (state, action) => ({
       ...state,
       hostId: action.payload.to,
-      host: action.payload.host,
-      signaling: true
-    }),
-    [actions.channelOpened]: state => ({
-      ...state,
-      channelOpen: true
+      host: action.payload.host
     }),
     [actions.changeMode]: (state, action) => ({
       ...state,
